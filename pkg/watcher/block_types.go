@@ -19,7 +19,10 @@ func NewBlockInfo(block *types.Block, validatorStatus []ValidatorStatus) *BlockI
 	// Compute total signed validators
 	signedValidators := 0
 	for _, sig := range block.LastCommit.Signatures {
-		if sig.BlockIDFlag == types.BlockIDFlagCommit {
+		// Berachain-specific: Also count BlockIDFlagAggCommit (4) and BlockIDFlagAggCommitAbsent (5)
+		if sig.BlockIDFlag == types.BlockIDFlagCommit ||
+			sig.BlockIDFlag == 4 || // BlockIDFlagAggCommit (Berachain-specific)
+			sig.BlockIDFlag == 5 { // BlockIDFlagAggCommitAbsent (Berachain-specific)
 			signedValidators++
 		}
 	}

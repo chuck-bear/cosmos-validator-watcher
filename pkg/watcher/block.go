@@ -253,7 +253,13 @@ func (w *BlockWatcher) computeValidatorStatus(block *types.Block) []ValidatorSta
 		for i, sig := range block.LastCommit.Signatures {
 			if val.Address == sig.ValidatorAddress.String() {
 				bonded = true
-				signed = (sig.BlockIDFlag == types.BlockIDFlagCommit)
+				// Berachain-specific: BlockIDFlagAggCommit (4) and BlockIDFlagAggCommitAbsent (5) are in Berachain's cometbft fork.
+				// This is a temporary solution to handle the fork.
+				// TODO: Remove this once the fork is merged into the original cometbft.
+				// PR for the reference: https://github.com/berachain/cometbft/pull/11
+				signed = (sig.BlockIDFlag == types.BlockIDFlagCommit) ||
+					(sig.BlockIDFlag == 4) || // BlockIDFlagAggCommit (Berachain-specific)
+					(sig.BlockIDFlag == 5) // BlockIDFlagAggCommitAbsent (Berachain-specific)
 				rank = i + 1
 			}
 			if signed {
