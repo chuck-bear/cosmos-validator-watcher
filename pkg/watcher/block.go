@@ -253,6 +253,8 @@ func (w *BlockWatcher) computeValidatorStatus(block *types.Block) []ValidatorSta
 		for i, sig := range block.LastCommit.Signatures {
 			if val.Address == sig.ValidatorAddress.String() {
 				bonded = true
+				// != Absent also covers Berachain cometbft agg flags (4/5);
+				// see https://github.com/berachain/cometbft/pull/11
 				signed = (sig.BlockIDFlag != types.BlockIDFlagAbsent)
 				rank = i + 1
 			}

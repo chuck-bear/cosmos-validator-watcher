@@ -19,6 +19,8 @@ func NewBlockInfo(block *types.Block, validatorStatus []ValidatorStatus) *BlockI
 	// Compute total signed validators
 	signedValidators := 0
 	for _, sig := range block.LastCommit.Signatures {
+		// != Absent also covers Berachain cometbft agg flags (4/5);
+		// see https://github.com/berachain/cometbft/pull/11
 		if sig.BlockIDFlag != types.BlockIDFlagAbsent {
 			signedValidators++
 		}
