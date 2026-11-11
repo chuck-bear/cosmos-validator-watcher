@@ -55,6 +55,14 @@ func RunFunc(cCtx *cli.Context) error {
 		// Babylon specific flags
 		babylonEnabled    = cCtx.Bool("babylon")
 		finalityProviders = cCtx.StringSlice("finality-provider")
+
+		// Berachain specific flags
+		berachainEnabled     = cCtx.Bool("berachain")
+		beaconAPI            = cCtx.String("beacon-api")
+		validatorSetCap      = cCtx.Uint64("validator-set-cap")
+		minActivationBalance = cCtx.Uint64("min-activation-balance")
+		nextUpgradeName      = cCtx.String("next-upgrade-name")
+		nextUpgradeTimestamp = cCtx.Int64("next-upgrade-timestamp")
 	)
 
 	//
@@ -163,6 +171,29 @@ func RunFunc(cCtx *cli.Context) error {
 			return babylonWatcher.Start(ctx)
 		})
 		pool.OnNodeEvent(rpc.EventNewBlock, babylonWatcher.OnNewBlock)
+	}
+	if berachainEnabled {
+		if denom == "" {
+			denom = "bera"
+		}
+		berachainWatcher := watcher.NewBerachainWatcher(metrics, pool, watcher.BerachainWatcherOptions{
+			BeaconAPI:            beaconAPI,
+			Denom:                denom,
+			ValidatorSetCap:      validatorSetCap,
+			MinActivationBalance: minActivationBalance,
+			NextUpgradeName:      nextUpgradeName,
+			NextUpgradeTimestamp: nextUpgradeTimestamp,
+		})
+		errg.Go(func() error {
+			return berachainWatcher.Start(ctx)
+		})
+		log.Info().
+			Str("beacon_api", beaconAPI).
+			Uint64("validator_set_cap", validatorSetCap).
+			Uint64("min_activation_balance_gwei", minActivationBalance).
+			Str("next_upgrade", nextUpgradeName).
+			Int64("next_upgrade_ts", nextUpgradeTimestamp).
+			Msg("berachain watcher enabled")
 	}
 
 	//

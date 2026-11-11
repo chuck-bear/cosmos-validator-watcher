@@ -13,6 +13,12 @@ type Metrics struct {
 	BlockHeight              *prometheus.GaugeVec
 	ProposalEndTime          *prometheus.GaugeVec
 	SeatPrice                *prometheus.GaugeVec
+	TotalStake               *prometheus.GaugeVec
+	ActiveSetMinStake        *prometheus.GaugeVec
+	ValidatorSetCap          *prometheus.GaugeVec
+	MinActivationBalance     *prometheus.GaugeVec
+	NextUpgradeTimestamp     *prometheus.GaugeVec
+	BeaconAPIUp              *prometheus.GaugeVec
 	SkippedBlocks            *prometheus.CounterVec
 	TrackedBlocks            *prometheus.CounterVec
 	Transactions             *prometheus.CounterVec
@@ -77,9 +83,57 @@ func New(namespace string) *Metrics {
 			prometheus.GaugeOpts{
 				Namespace: namespace,
 				Name:      "seat_price",
-				Help:      "Min seat price to be in the active set (ie. bonded tokens of the latest validator)",
+				Help:      "Min seat price to be in the active set (protocol min-activation-balance, or cosmos bonded tokens of the latest validator)",
 			},
 			[]string{"chain_id", "denom"},
+		),
+		TotalStake: prometheus.NewGaugeVec(
+			prometheus.GaugeOpts{
+				Namespace: namespace,
+				Name:      "total_stake",
+				Help:      "Total stake of the active validator set",
+			},
+			[]string{"chain_id", "denom"},
+		),
+		ActiveSetMinStake: prometheus.NewGaugeVec(
+			prometheus.GaugeOpts{
+				Namespace: namespace,
+				Name:      "active_set_min_stake",
+				Help:      "Lowest voting power currently in the active set",
+			},
+			[]string{"chain_id", "denom"},
+		),
+		ValidatorSetCap: prometheus.NewGaugeVec(
+			prometheus.GaugeOpts{
+				Namespace: namespace,
+				Name:      "validator_set_cap",
+				Help:      "Maximum number of validators allowed in the active set",
+			},
+			[]string{"chain_id"},
+		),
+		MinActivationBalance: prometheus.NewGaugeVec(
+			prometheus.GaugeOpts{
+				Namespace: namespace,
+				Name:      "min_activation_balance",
+				Help:      "Minimum balance required to activate / enter the active set",
+			},
+			[]string{"chain_id", "denom"},
+		),
+		NextUpgradeTimestamp: prometheus.NewGaugeVec(
+			prometheus.GaugeOpts{
+				Namespace: namespace,
+				Name:      "next_upgrade_timestamp",
+				Help:      "Unix timestamp of the next scheduled chain upgrade / hard fork",
+			},
+			[]string{"chain_id", "version"},
+		),
+		BeaconAPIUp: prometheus.NewGaugeVec(
+			prometheus.GaugeOpts{
+				Namespace: namespace,
+				Name:      "beacon_api_up",
+				Help:      "Set to 1 when the configured Beacon API is reachable",
+			},
+			[]string{"chain_id"},
 		),
 		Rank: prometheus.NewGaugeVec(
 			prometheus.GaugeOpts{
@@ -365,6 +419,12 @@ func (m *Metrics) Register() {
 	m.Registry.MustRegister(m.BlockHeight)
 	m.Registry.MustRegister(m.ActiveSet)
 	m.Registry.MustRegister(m.SeatPrice)
+	m.Registry.MustRegister(m.TotalStake)
+	m.Registry.MustRegister(m.ActiveSetMinStake)
+	m.Registry.MustRegister(m.ValidatorSetCap)
+	m.Registry.MustRegister(m.MinActivationBalance)
+	m.Registry.MustRegister(m.NextUpgradeTimestamp)
+	m.Registry.MustRegister(m.BeaconAPIUp)
 	m.Registry.MustRegister(m.Rank)
 	m.Registry.MustRegister(m.ProposedBlocks)
 	m.Registry.MustRegister(m.ValidatedBlocks)
