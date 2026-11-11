@@ -20,12 +20,15 @@ RUN make build
 
 # Final image
 FROM alpine:3.21
-RUN apk upgrade && apk add --no-cache bash curl
+RUN apk upgrade --no-cache \
+  && apk add --no-cache bash curl \
+  && apk add --no-cache --upgrade libssl3 libcrypto3
 
-RUN addgroup -g 1001 app
-RUN adduser -D -G app -u 1001 app
+RUN addgroup -g 1001 app \
+  && adduser -D -G app -u 1001 app
 
 COPY --from=builder /go/src/app/build/cosmos-validator-watcher /
+USER app
 
 WORKDIR /
 ENTRYPOINT ["/cosmos-validator-watcher"]
