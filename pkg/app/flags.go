@@ -124,13 +124,11 @@ var Flags = []cli.Flag{
 	},
 	&cli.StringFlag{
 		Name:  "next-upgrade-name",
-		Usage: "label for next berachain upgrade metric (default: fulu)",
-		Value: "fulu",
+		Usage: "label for next berachain upgrade metric (unset until a post-fulu fork is scheduled)",
 	},
 	&cli.Int64Flag{
 		Name:  "next-upgrade-timestamp",
-		Usage: "unix timestamp of next berachain upgrade (default: fulu/osakaTime 1783526400)",
-		Value: 1_783_526_400,
+		Usage: "unix timestamp of next berachain upgrade (unset; fulu/osakaTime 1783526400 is already live)",
 	},
 }
 

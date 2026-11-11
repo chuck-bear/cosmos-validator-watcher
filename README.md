@@ -125,7 +125,7 @@ Metrics (without prefix)        | Description
 `active_set_min_stake`          | Lowest voting power currently in the active set (requires --berachain)
 `validator_set_cap`             | Max validators in the active set (requires --berachain; mainnet 69)
 `min_activation_balance`        | Min balance to activate / enter the set (requires --berachain; mainnet 250000 BERA)
-`next_upgrade_timestamp`        | Unix timestamp of the next scheduled upgrade (requires --berachain)
+`next_upgrade_timestamp`        | Unix timestamp of the next scheduled upgrade (requires --berachain + --next-upgrade-*)
 `beacon_api_up`                 | Set to 1 when Beacon API is reachable (requires --berachain --beacon-api)
 `signed_blocks_window`          | Number of blocks per signing window
 `skipped_blocks`                | Number of blocks skipped (ie. not tracked) since start

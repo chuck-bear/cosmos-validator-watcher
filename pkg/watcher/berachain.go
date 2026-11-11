@@ -13,12 +13,11 @@ import (
 
 // Mainnet (80094) defaults from beacon-kit testing/networks/80094:
 //   spec.toml  validator-set-cap=69, min-activation-balance=250_000_000_000_000
-//   spec.toml  fulu-fork-time=1783526400 (== eth-genesis.json config.osakaTime)
+// fulu (osakaTime 1783526400 / 2026-07-08) is already live; no next fork is
+// scheduled in eth-genesis.json — pass --next-upgrade-* when one is announced.
 const (
 	defaultValidatorSetCap      = 69
 	defaultMinActivationBalance = 250_000_000_000_000 // gwei (= 250_000 BERA)
-	defaultNextUpgradeName      = "fulu"
-	defaultNextUpgradeTimestamp = 1_783_526_400
 )
 
 type BerachainWatcher struct {
@@ -46,12 +45,6 @@ func NewBerachainWatcher(metrics *metrics.Metrics, pool *rpc.Pool, opts Berachai
 	}
 	if opts.MinActivationBalance == 0 {
 		opts.MinActivationBalance = defaultMinActivationBalance
-	}
-	if opts.NextUpgradeName == "" {
-		opts.NextUpgradeName = defaultNextUpgradeName
-	}
-	if opts.NextUpgradeTimestamp == 0 {
-		opts.NextUpgradeTimestamp = defaultNextUpgradeTimestamp
 	}
 	return &BerachainWatcher{
 		metrics: metrics,
@@ -100,7 +93,9 @@ func (w *BerachainWatcher) publishStatic(chainID string) {
 	w.metrics.MinActivationBalance.WithLabelValues(chainID, w.opts.Denom).Set(minActivationBERA)
 	// Protocol seat price to become / stay eligible (Electra min-activation-balance).
 	w.metrics.SeatPrice.WithLabelValues(chainID, w.opts.Denom).Set(minActivationBERA)
-	w.metrics.NextUpgradeTimestamp.WithLabelValues(chainID, w.opts.NextUpgradeName).Set(float64(w.opts.NextUpgradeTimestamp))
+	if w.opts.NextUpgradeTimestamp > 0 && w.opts.NextUpgradeName != "" {
+		w.metrics.NextUpgradeTimestamp.WithLabelValues(chainID, w.opts.NextUpgradeName).Set(float64(w.opts.NextUpgradeTimestamp))
+	}
 }
 
 func (w *BerachainWatcher) fetchCometValidators(ctx context.Context, node *rpc.Node) error {
