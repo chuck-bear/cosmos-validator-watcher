@@ -210,6 +210,21 @@ Notes:
 - this doesns't work for consumer chains (neutron, stride) since they don't rely on the `staking` module
 
 
+
+
+## Berachain
+
+Enable with `--berachain` (optionally `--beacon-api http://localhost:3500`).
+
+Defaults match mainnet `80094` from [beacon-kit spec.toml](https://github.com/berachain/beacon-kit/blob/main/testing/networks/80094/spec.toml):
+
+- `validator-set-cap` = 69
+- `min-activation-balance` = 250000 BERA (seat price)
+
+`fulu` (`osakaTime` = 1783526400, 2026-07-08) is already live; eth-genesis has no scheduled next fork. Pass `--next-upgrade-name` / `--next-upgrade-timestamp` when one is announced.
+
+Live stake is scraped from CometBFT `/validators` on `--node` (e.g. `:26657`).
+
 ## 📃 License
 
 [MIT License](LICENSE).
