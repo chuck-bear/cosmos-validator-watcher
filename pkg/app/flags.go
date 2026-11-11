@@ -103,6 +103,33 @@ var Flags = []cli.Flag{
 		Name:  "finality-provider",
 		Usage: "list of finality providers to watch (requires --babylon)",
 	},
+	&cli.BoolFlag{
+		Name:  "berachain",
+		Usage: "enable berachain watcher (total stake, seat price, validator cap, next upgrade)",
+	},
+	&cli.StringFlag{
+		Name:  "beacon-api",
+		Usage: "beacon HTTP API base URL (requires --berachain), e.g. http://localhost:3500",
+		Value: "http://localhost:3500",
+	},
+	&cli.Uint64Flag{
+		Name:  "validator-set-cap",
+		Usage: "berachain validator-set-cap from chain spec (default: mainnet 69)",
+		Value: 69,
+	},
+	&cli.Uint64Flag{
+		Name:  "min-activation-balance",
+		Usage: "berachain min-activation-balance in gwei (default: 250000 BERA = 250000000000000)",
+		Value: 250_000_000_000_000,
+	},
+	&cli.StringFlag{
+		Name:  "next-upgrade-name",
+		Usage: "label for next berachain upgrade metric (unset until a post-fulu fork is scheduled)",
+	},
+	&cli.Int64Flag{
+		Name:  "next-upgrade-timestamp",
+		Usage: "unix timestamp of next berachain upgrade (unset; fulu/osakaTime 1783526400 is already live)",
+	},
 }
 
 func init() {
